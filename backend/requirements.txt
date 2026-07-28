@@ -1,0 +1,11 @@
+Django~=5.2
+djangorestframework~=3.16
+djangorestframework-simplejwt~=5.4
+crewai
+crewai-tools
+psycopg2-binary
+boto3
+django-cors-headers
+python-dotenv
+pdfplumber
+PyPDF
