@@ -1,4 +1,28 @@
 services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: edtech_backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      MINIO_ENDPOINT: http://minio:9000
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
   db:
     image: pgvector/pgvector:pg16
     container_name: edtech_db
@@ -11,6 +35,11 @@ services:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U edtech"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   minio:
     image: minio/minio
@@ -25,6 +54,11 @@ services:
       - "9001:9001"
     volumes:
       - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   pgdata:
