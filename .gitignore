@@ -1,0 +1,38 @@
+.vscode/
+
+# Local environment files
+.env
+backend/.env
+backend/.env.*
+
+# Python virtual environments and bytecode
+.venv/
+backend/.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Django artifacts
+db.sqlite3
+backend/db.sqlite3
+backend/*/migrations/__pycache__/
+backend/*/__pycache__/
+
+# Django and test caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Build and package outputs
+build/
+dist/
+*.egg-info/
+
+# IDE and OS files
+.idea/
+*.swp
+*.swo
+.DS_Store
