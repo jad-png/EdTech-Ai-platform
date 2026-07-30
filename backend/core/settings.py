@@ -128,3 +128,5 @@ AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", "")
 AWS_STORAGE_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME", "documents")
 AWS_S3_REGION_NAME = os.getenv("MINIO_REGION", "us-east-1")
 AWS_S3_USE_SSL = os.getenv("MINIO_USE_SSL", "False").lower() == "true"
+
+AUTH_USER_MODEL = "users.User"
