@@ -3,8 +3,12 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 
 from .models import Document
-from .serializers import DocumentSerializer, DocumentUploadSerializer
-from core.storage import upload_file_to_minio, delete_file_from_minio
+from .serializers import (
+    DocumentSerializer,
+    DocumentUploadResponseSerializer,
+    DocumentUploadSerializer,
+)
+from core.storage import delete_file_from_minio, get_file_metadata, upload_file_to_minio
 
 
 class DocumentListUploadView(generics.ListCreateAPIView):
@@ -38,9 +42,17 @@ class DocumentListUploadView(generics.ListCreateAPIView):
             status=Document.Status.UPLOADED,
         )
 
-        return Response(
-            DocumentSerializer(doc).data, status=status.HTTP_201_CREATED
-        )
+        storage_metadata = get_file_metadata(object_key)
+
+        response_payload = {
+            "success": True,
+            "message": "Document uploaded and stored successfully.",
+            "document": DocumentSerializer(doc).data,
+            "storage": storage_metadata,
+        }
+
+        response_serializer = DocumentUploadResponseSerializer(response_payload)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class DocumentDetailView(generics.RetrieveDestroyAPIView):

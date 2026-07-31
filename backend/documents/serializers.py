@@ -11,7 +11,6 @@ class DocumentSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "file_size_bytes",
-            "page_count",
             "status",
             "error_message",
             "created_at",
@@ -19,7 +18,6 @@ class DocumentSerializer(serializers.ModelSerializer):
         read_only_fields = (
             "id",
             "file_size_bytes",
-            "page_count",
             "status",
             "error_message",
             "created_at",
@@ -63,3 +61,12 @@ class DocumentUploadSerializer(serializers.Serializer):
             )
 
         return attrs
+
+
+class DocumentUploadResponseSerializer(serializers.Serializer):
+    """Structured response returned after a document upload attempt."""
+
+    success = serializers.BooleanField()
+    message = serializers.CharField()
+    document = DocumentSerializer()
+    storage = serializers.DictField()
