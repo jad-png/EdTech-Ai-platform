@@ -6,6 +6,8 @@ This folder contains the Django REST Framework backend for the EdTech AI platfor
 
 A development Dockerfile is provided at [Dockerfile](Dockerfile).
 
+When the backend container starts, it now waits for PostgreSQL, runs Django migrations, and then launches the server. This means a fresh database volume created after `docker compose down -v` will be initialized automatically on the next start.
+
 ### Build
 
 ```bash
