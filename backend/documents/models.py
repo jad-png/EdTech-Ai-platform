@@ -21,6 +21,7 @@ class Document(models.Model):
         max_length=512, help_text="MinIO object storage path/key."
     )
     file_size_bytes = models.BigIntegerField(null=True, blank=True)
+    page_count = models.PositiveIntegerField(null=True, blank=True)
     status = models.CharField(
         max_length=20, choices=Status.choices, default=Status.UPLOADED
     )

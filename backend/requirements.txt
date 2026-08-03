@@ -10,3 +10,4 @@ python-dotenv
 pdfplumber
 PyPDF
 pgvector
+sentence-transformers

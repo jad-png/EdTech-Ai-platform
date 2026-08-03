@@ -1,3 +1,7 @@
+import logging
+from threading import Thread
+
+from django.db import close_old_connections
 from rest_framework import generics, permissions, status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
@@ -8,7 +12,21 @@ from .serializers import (
     DocumentUploadResponseSerializer,
     DocumentUploadSerializer,
 )
+from .services import process_document_pipeline
 from core.storage import delete_file_from_minio, get_file_metadata, upload_file_to_minio
+
+
+logger = logging.getLogger(__name__)
+
+
+def _run_document_pipeline_async(document_id: str):
+    close_old_connections()
+    try:
+        process_document_pipeline(document_id)
+    except Exception:
+        logger.exception("Document pipeline failed for document_id=%s", document_id)
+    finally:
+        close_old_connections()
 
 
 class DocumentListUploadView(generics.ListCreateAPIView):
@@ -41,6 +59,12 @@ class DocumentListUploadView(generics.ListCreateAPIView):
             file_size_bytes=uploaded_file.size,
             status=Document.Status.UPLOADED,
         )
+
+        Thread(
+            target=_run_document_pipeline_async,
+            args=(str(doc.id),),
+            daemon=True,
+        ).start()
 
         storage_metadata = get_file_metadata(object_key)
 
