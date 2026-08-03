@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from pgvector.django import VectorField
 import uuid
 
 class Document(models.Model):
@@ -13,7 +14,7 @@ class Document(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="docuemnts",
+        related_name="documents",
     )
     title = models.CharField(max_length=255)
     file_key = models.CharField(
@@ -32,3 +33,20 @@ class Document(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.user.username}) - {self.status}"
+
+class DocumentChunk(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    document = models.ForeignKey(
+        Document, on_delete=models.CASCADE, related_name="chunks"
+    )
+    content = models.TextField()
+    page_number = models.IntegerField()
+    chunk_index = models.IntegerField()
+    embedding = VectorField(dimensions=384)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ["chunk_index"]
+
+    def __str__(self):
+        return f"{self.document.title} - Chunk {self.chunk_index} (Page {self.page_number})"
