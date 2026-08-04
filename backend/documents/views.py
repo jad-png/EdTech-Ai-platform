@@ -12,7 +12,7 @@ from .serializers import (
     DocumentUploadResponseSerializer,
     DocumentUploadSerializer,
 )
-from .services.pipeline import process_document_pipeline
+from .services.ingestion.pipeline import process_document_pipeline
 from core.storage import delete_file_from_minio, get_file_metadata, upload_file_to_minio
 
 

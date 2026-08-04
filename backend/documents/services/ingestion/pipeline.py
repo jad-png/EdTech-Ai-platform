@@ -1,10 +1,10 @@
 import logging
 
-from ..models import Document, DocumentChunk
+from ...models import Document, DocumentChunk
 from .chunking import chunk_text
 from .embeddings import get_embedding_model
 from .pdf_extraction import load_pdf_reader
-from .storage import fetch_document_file_bytes
+from ..storage import fetch_document_file_bytes
 
 
 logger = logging.getLogger(__name__)
