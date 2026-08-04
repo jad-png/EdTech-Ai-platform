@@ -1,35 +1,13 @@
-import io
 import logging
 
-from pypdf import PdfReader
-from sentence_transformers import SentenceTransformer
-from django.conf import settings
-from core.storage import get_s3_client
-from .models import Document, DocumentChunk
+from ..models import Document, DocumentChunk
+from .chunking import chunk_text
+from .embeddings import get_embedding_model
+from .pdf_extraction import load_pdf_reader
+from .storage import fetch_document_file_bytes
 
-_embedding_model = None
+
 logger = logging.getLogger(__name__)
-
-def get_embedding_model():
-    global _embedding_model
-    if _embedding_model is None:
-        _embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
-    return _embedding_model
-
-
-def chunk_text(text: str, chunk_size: int = 500, chunk_overlap: int = 50):
-    chunks = []
-    start = 0
-    text_len = len(text)
-
-    while start < text_len:
-        end = start + chunk_size
-        chunk = text[start:end].strip()
-        if chunk:
-            chunks.append(chunk)
-        start += chunk_size - chunk_overlap
-
-    return chunks
 
 
 def process_document_pipeline(document_id: str):
@@ -40,14 +18,8 @@ def process_document_pipeline(document_id: str):
         doc.status = Document.Status.PROCESSING
         doc.save(update_fields=["status"])
 
-        s3 = get_s3_client()
-        response = s3.get_object(
-            Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=doc.file_key
-        )
-        file_bytes = response["Body"].read()
-
-        pdf_file = io.BytesIO(file_bytes)
-        reader = PdfReader(pdf_file)
+        file_bytes = fetch_document_file_bytes(doc.file_key)
+        reader = load_pdf_reader(file_bytes)
 
         doc.page_count = len(reader.pages)
         doc.save(update_fields=["page_count"])
