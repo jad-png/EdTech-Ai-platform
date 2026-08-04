@@ -34,6 +34,22 @@ def search_similar_chunks(document_id: str, query_text: str = None, top_k: int =
         for chunk in chunks
     ]
     
+def get_relevant_context(
+    document_id: str,
+    query_text: str = None,
+    top_k: int = 5,
+) -> str:
+    """
+    High-level context retriever.
+    Converts retrieved vector chunks into a unified string context block
+    ready for LLM prompt injection.
+    """
+    chunks = search_similar_chunks(
+        document_id=document_id, query_text=query_text, top_k=top_k
+    )
+    if not chunks:
+        return ""
 
+    return "\n\n".join([chunk["content"] for chunk in chunks])
     
     
