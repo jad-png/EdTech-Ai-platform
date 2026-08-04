@@ -11,3 +11,4 @@ pdfplumber
 PyPDF
 pgvector
 sentence-transformers
+google-generativeai
