@@ -1,11 +1,10 @@
 import json
 import logging
-import google.generativeai as genai
-from django.conf import settings
 
 from documents.models import Document
 from documents.services.retrieval import get_relevant_context
 from ..models import Quiz, Question, Option
+from .llm import generate_content
 
 logger = logging.getLogger(__name__)
 
@@ -17,9 +16,6 @@ def generate_quiz_for_document(user, document_id: str, num_questions: int = 5, d
     
     if not context_text:
         raise ValueError("No processed context found for this document.")
-    
-    genai.configure(api_key=settings.GEMINI_API_KEY)
-    llm =  genai.GenerativeModel("gemini-1.5-flash")
     
     prompt = f"""
     You are an expert AI quiz generator. Generate a structured JSON quiz based ONLY on the context below.
@@ -49,9 +45,9 @@ def generate_quiz_for_document(user, document_id: str, num_questions: int = 5, d
       ]
     }}
     """
-    
-    response = llm.generate_context(prompt)
-    clean_json = response.text.replace("```json", "").replace("```", "").strip()
+
+    response_text = generate_content(prompt)
+    clean_json = response_text.replace("```json", "").replace("```", "").strip()
     quiz_payload = json.loads(clean_json)
     
     quiz = Quiz.objects.create(
