@@ -130,3 +130,5 @@ AWS_S3_REGION_NAME = os.getenv("MINIO_REGION", "us-east-1")
 AWS_S3_USE_SSL = os.getenv("MINIO_USE_SSL", "False").lower() == "true"
 
 AUTH_USER_MODEL = "users.User"
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
