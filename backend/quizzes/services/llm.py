@@ -5,7 +5,7 @@ from google import genai
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL = "gemini-1.5-flash"
+DEFAULT_MODEL = "gemini-2.5-flash"
 
 
 def _get_client() -> genai.Client:
