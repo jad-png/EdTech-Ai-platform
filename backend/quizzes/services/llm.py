@@ -1,18 +1,6 @@
-import logging
-
-from django.conf import settings
-from google import genai
-
-logger = logging.getLogger(__name__)
-
-DEFAULT_MODEL = "gemini-2.5-flash"
-
-
-def _get_client() -> genai.Client:
-    return genai.Client(api_key=settings.GEMINI_API_KEY)
+from shared.llm import DEFAULT_MODEL, GeminiLLMClient, get_default_llm_client
 
 
 def generate_content(prompt: str, model: str = DEFAULT_MODEL) -> str:
-    client = _get_client()
-    response = client.models.generate_content(model=model, contents=prompt)
-    return response.text or ""
+    client = get_default_llm_client()
+    return client.generate_text(prompt, model=model)
