@@ -1,3 +1,9 @@
-from .pgvector import search_similar_chunks, get_relevant_context
+from .base import RetrievalService, RetrievedChunk
+from .pgvector import get_relevant_context, search_similar_chunks
 
-__all__ = ["search_similar_chunks", "get_relevant_context"]
+__all__ = [
+	"RetrievalService",
+	"RetrievedChunk",
+	"search_similar_chunks",
+	"get_relevant_context",
+]
