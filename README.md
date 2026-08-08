@@ -1,68 +1,63 @@
 # EdTech AI Platform
 
-Backend-first EdTech platform for AI-assisted learning, content processing, and assessment workflows. The current repository state is an initial backend scaffold focused on Django REST Framework, JWT authentication, CrewAI orchestration, PostgreSQL with pgvector, and MinIO-backed object storage.
+EdTech AI Platform is a backend-first learning system for ingesting educational documents, generating quizzes from their content, and tracking learner performance. The current implementation already covers the core workflow from document upload to AI-powered quiz generation and assessment.
 
-## What I am building
+## What is implemented
 
-This project is being set up as an AI-powered education backend that will eventually support:
+The backend now includes:
 
-- document ingestion and storage for learning materials,
-- quiz generation and assessment flows,
-- user authentication and role-based access,
-- CrewAI-driven agent workflows for education automation,
-- vector-enabled storage for retrieval and future AI search features.
+- JWT-based authentication with user registration and profile endpoints
+- Role-aware user accounts with learner/admin support
+- Document upload and storage through MinIO
+- PDF document processing, chunking, and embedding generation
+- Vector-based retrieval over document chunks using pgvector
+- AI-generated quizzes based on document context
+- Quiz attempt creation, answer submission, grading, and learning analytics
+- Docker-based local infrastructure for PostgreSQL and MinIO
 
-## Current scope
-
-At the moment, the repository contains the backend foundation only. The codebase is structured so the next implementation steps can focus on API logic, domain models, and AI workflows without reworking the infrastructure layer.
-
-## Backend stack
+## Tech stack
 
 - Python and Django
 - Django REST Framework
-- djangorestframework-simplejwt for JWT auth
-- CrewAI and crewai-tools for multi-agent orchestration
+- djangorestframework-simplejwt
 - PostgreSQL with pgvector
-- MinIO for local S3-compatible object storage
-- Docker Compose for local infrastructure
+- MinIO for object storage
+- Docker Compose for local services
+- Gemini-backed LLM integration for quiz generation
 
-## Project layout
+## Project structure
 
-- [backend/](backend) contains the Django project and service configuration.
-- [backend/core/](backend/core) contains the Django settings, URL routing, and storage helper.
-- [backend/users/](backend/users) is reserved for authentication and user-facing API endpoints.
-- [backend/documents/](backend/documents) is reserved for file ingestion and document workflows.
-- [backend/quizzes/](backend/quizzes) is reserved for quiz generation and evaluation workflows.
-- [backend/agents/](backend/agents) contains CrewAI bootstrap and future agent/task/tool modules.
+- [backend/](backend) contains the Django project and service configuration
+- [backend/core/](backend/core) contains settings, routing, and shared storage helpers
+- [backend/users/](backend/users) handles authentication and user profile APIs
+- [backend/documents/](backend/documents) handles document upload, PDF processing, and retrieval
+- [backend/quizzes/](backend/quizzes) handles quiz generation, submission, grading, and analytics
+- [backend/agents/](backend/agents) contains the initial CrewAI-oriented structure for future agent workflows
+
+## Current API capabilities
+
+The backend exposes these main routes:
+
+- Authentication: `/api/auth/token/`, `/api/auth/token/refresh/`
+- Users: `/api/users/register/`, `/api/users/me/`
+- Documents: `/api/documents/`, `/api/documents/<uuid>/`
+- Quizzes: `/api/quizzes/`, `/api/quizzes/generate/`, `/api/quizzes/<uuid>/start/`, `/api/quizzes/attempts/<uuid>/submit/`, `/api/quizzes/analytics/`
 
 ## Local development
 
-The backend is intended to run on the host machine while PostgreSQL and MinIO run in Docker.
-
-1. Create and activate the Python virtual environment inside [backend/](backend).
-2. Install dependencies from [backend/requirements.txt](backend/requirements.txt).
-3. Copy [backend/.env.example](backend/.env.example) to [backend/.env](backend/.env) and adjust values if needed.
-4. Start infrastructure with `docker compose up -d` from [backend/](backend).
-5. Run migrations with `python manage.py migrate` from [backend/](backend).
-6. Start the dev server with `python manage.py runserver 0.0.0.0:8000` from [backend/](backend).
+1. Enter the backend folder: `cd backend`
+2. Create and activate a Python virtual environment
+3. Install dependencies: `pip install -r requirements.txt`
+4. Copy [backend/.env.example](backend/.env.example) to [backend/.env](backend/.env) and adjust values as needed
+5. Start infrastructure services: `docker compose up -d`
+6. Run migrations: `python manage.py migrate`
+7. Start the development server: `python manage.py runserver 0.0.0.0:8000`
 
 ## Services
 
-- PostgreSQL listens on host port 5433 in this workspace because 5432 was already in use locally.
-- MinIO serves the object storage API on port 9000 and the web console on port 9001.
-
-## Environment
-
-The backend configuration is driven by environment variables for Django, Postgres, MinIO, JWT timing, and LLM provider keys. See [backend/.env.example](backend/.env.example) for the complete list.
-
-## Roadmap
-
-- Add API endpoints for user registration and login.
-- Implement document upload and retrieval flows.
-- Build quiz creation and grading endpoints.
-- Add CrewAI agents for tutoring, content generation, and workflow automation.
-- Introduce tests and deployment-ready settings splits once core behavior is in place.
+- PostgreSQL runs on port `5433` in this workspace to avoid a local conflict with port `5432`
+- MinIO serves the object storage API on port `9000` and the console on port `9001`
 
 ## Status
 
-The project is in early backend initialization. Infrastructure and baseline Django configuration are in place, and the next work will be core application logic.
+The project is now beyond the initial scaffold and supports a working backend flow for document ingestion, semantic retrieval, and AI-assisted quiz creation and evaluation.
