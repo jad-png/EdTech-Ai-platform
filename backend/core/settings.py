@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "users",
     "documents",
     "quizzes",
+    "chat",
 ]
 
 MIDDLEWARE = [

@@ -9,6 +9,7 @@ from documents.services.ingestion.embeddings import get_embedding_model
 from .base import RetrievalService, RetrievedChunk
 
 DEFAULT_QUERY_PROMPT = "Main concepts, summary, key takeaways, and definitions"
+DEFAULT_MAX_COSINE_DISTANCE = 0.5
 
 
 def _get_document_chunk_model():
@@ -22,6 +23,7 @@ class PgvectorDocumentChunkAdapter:
         document_id: str,
         top_k: int,
         user=None,
+        max_distance: float = DEFAULT_MAX_COSINE_DISTANCE,
     ) -> list[RetrievedChunk]:
         document_chunk_model = _get_document_chunk_model()
         queryset = document_chunk_model.objects.filter(document_id=document_id)
@@ -30,6 +32,7 @@ class PgvectorDocumentChunkAdapter:
 
         chunks = (
             queryset.annotate(distance=CosineDistance("embedding", query_vector))
+            .filter(distance__lte=max_distance)
             .order_by("distance")[:top_k]
         )
 
@@ -56,6 +59,7 @@ class PgvectorRetrievalService(RetrievalService):
         query_text: str | None = None,
         top_k: int = 5,
         user=None,
+        max_distance: float = DEFAULT_MAX_COSINE_DISTANCE,
     ) -> list[RetrievedChunk]:
         model = get_embedding_model()
         search_prompt = query_text if query_text else DEFAULT_QUERY_PROMPT
@@ -65,6 +69,7 @@ class PgvectorRetrievalService(RetrievalService):
             document_id=document_id,
             top_k=top_k,
             user=user,
+            max_distance=max_distance,
         )
 
     def get_relevant_context(
@@ -73,12 +78,14 @@ class PgvectorRetrievalService(RetrievalService):
         query_text: str | None = None,
         top_k: int = 5,
         user=None,
+        max_distance: float = DEFAULT_MAX_COSINE_DISTANCE,
     ) -> str:
         chunks = self.search_similar_chunks(
             document_id=document_id,
             query_text=query_text,
             top_k=top_k,
             user=user,
+            max_distance=max_distance,
         )
         if not chunks:
             return ""
@@ -95,12 +102,14 @@ def search_similar_chunks(
     query_text: str | None = None,
     top_k: int = 5,
     user=None,
+    max_distance: float = DEFAULT_MAX_COSINE_DISTANCE,
 ) -> list[dict[str, Any]]:
     chunks = _get_default_service().search_similar_chunks(
         document_id=document_id,
         query_text=query_text,
         top_k=top_k,
         user=user,
+        max_distance=max_distance,
     )
     return [chunk.to_dict() for chunk in chunks]
 
@@ -110,10 +119,12 @@ def get_relevant_context(
     query_text: str | None = None,
     top_k: int = 5,
     user=None,
+    max_distance: float = DEFAULT_MAX_COSINE_DISTANCE,
 ) -> str:
     return _get_default_service().get_relevant_context(
         document_id=document_id,
         query_text=query_text,
         top_k=top_k,
         user=user,
+        max_distance=max_distance,
     )

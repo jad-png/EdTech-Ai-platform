@@ -7,7 +7,7 @@ from typing import Any
 def get_conversation_messages(conversation, limit: int | None = None):
     messages = conversation.messages.all().order_by("created_at")
     if limit is not None:
-        messages = messages[-limit:]
+        messages = list(messages)[-limit:]
     return list(messages)
 
 
