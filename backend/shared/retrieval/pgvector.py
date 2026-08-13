@@ -9,7 +9,7 @@ from documents.services.ingestion.embeddings import get_embedding_model
 from .base import RetrievalService, RetrievedChunk
 
 DEFAULT_QUERY_PROMPT = "Main concepts, summary, key takeaways, and definitions"
-DEFAULT_MAX_COSINE_DISTANCE = 0.5
+DEFAULT_MAX_COSINE_DISTANCE = 2
 
 
 def _get_document_chunk_model():
