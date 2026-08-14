@@ -33,48 +33,70 @@ def _build_shared_llm():
 
 
 def run_edtech_crew(
-    *, user, document_id: str | None, content: str, history: str
+    *,
+    workflow: str = "chat",
+    user,
+    document_id: str | None,
+    content: str,
+    history: str = "",
+    num_questions: int = 5,
+    difficulty: str = "MEDIUM",
+    topic: str | None = None,
 ) -> dict[str, Any]:
-    """Run the first Chat -> RAG -> pedagogical CrewAI vertical slice."""
-    from crewai import Agent, Crew, Process, Task
+    if workflow not in {"chat", "quiz_generation"}:
+        raise ValueError(f"Unsupported CrewAI workflow: {workflow}")
 
+    from crewai import Agent, Crew, Process
     from agents.tools import build_retrieval_tool
 
     retrieval_tool, sources = build_retrieval_tool(document_id, user)
-    retrieved_context = retrieval_tool.run(query_text=content)
+    retrieved_context = retrieval_tool.run(query_text=topic or content)
     llm = _build_shared_llm()
 
-    pedagogical_agent = Agent(
-        role="Pedagogical Agent",
-        goal="Write a clear, concise, educational answer using history and retrieved context.",
-        backstory="You explain concepts accurately and transparently when context is missing.",
-        llm=llm,
-        allow_delegation=False,
-        verbose=False,
-    )
+    
+    if workflow == "chat":
+        from agents.tasks.pedagogical import build_pedagogical_task
 
-    answer_task = Task(
-        description=(
-            "Generate the final educational answer for {request}.\n"
-            "Conversation history:\n{history}\n"
-            "Retrieved context:\n{retrieved_context}\n"
-            "Answer only the user."
-        ),
-        expected_output="The final educational answer.",
-        agent=pedagogical_agent,
-    )
-
-    result = Crew(
-        agents=[pedagogical_agent],
-        tasks=[answer_task],
-        process=Process.sequential,
-        verbose=False,
-    ).kickoff(
-        inputs={
+        agent = Agent(
+            role="Pedagogical Agent",
+            goal="Write a clear, concise, educational answer using history and retrieved context.",
+            backstory="You explain concepts accurately and transparently when context is missing.",
+            llm=llm,
+            allow_delegation=False,
+            verbose=False,
+        )
+        task = build_pedagogical_task(agent)
+        inputs = {
             "request": content,
             "history": history or "(No previous messages)",
             "retrieved_context": retrieved_context,
         }
-    )
+        result_key = "answer"
+    else:
+        from agents.tasks.generator import build_generator_task
 
-    return {"answer": result.raw, "sources": sources}
+        agent = Agent(
+            role="Generator Agent",
+            goal="Generate structured quiz content from retrieved educational context.",
+            backstory="You generate valid quiz JSON without managing persistence or domain models.",
+            llm=llm,
+            allow_delegation=False,
+            verbose=False,
+        )
+        task = build_generator_task(agent)
+        inputs = {
+            "retrieved_context": retrieved_context,
+            "num_questions": num_questions,
+            "difficulty": difficulty,
+            "topic": topic or content,
+        }
+        result_key = "quiz"
+
+    result = Crew(
+        agents=[agent],
+        tasks=[task],
+        process=Process.sequential,
+        verbose=False,
+    ).kickoff(inputs=inputs)
+
+    return {result_key: result.raw, "sources": sources}
