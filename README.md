@@ -11,6 +11,7 @@ The project currently includes:
 - Document upload and storage through MinIO
 - PDF extraction, chunking, embedding generation, and semantic retrieval with pgvector
 - AI-generated quizzes based on document context
+- CrewAI orchestration for Chat/RAG responses and quiz generation
 - Quiz attempt creation, answer submission, automatic grading, and learning analytics
 - Docker-based local infrastructure for PostgreSQL and MinIO
 
@@ -22,7 +23,7 @@ The project currently includes:
 - PostgreSQL with pgvector
 - MinIO for object storage
 - Docker Compose for local services
-- Gemini-backed LLM integration for quiz generation
+- CrewAI with a shared Gemini-backed LLM abstraction
 
 ## Project structure
 
@@ -30,8 +31,10 @@ The project currently includes:
 - [backend/core/](backend/core) contains settings, routing, and shared storage helpers
 - [backend/users/](backend/users) handles authentication and user profile APIs
 - [backend/documents/](backend/documents) handles document upload, PDF processing, and retrieval
-- [backend/quizzes/](backend/quizzes) handles quiz generation, submission, grading, and analytics
-- [backend/agents/](backend/agents) contains the initial CrewAI-oriented structure for future agent workflows
+- [backend/quizzes/](backend/quizzes) handles quiz generation, persistence, submission, grading, and analytics
+- [backend/chat/](backend/chat) handles conversations and Chat/RAG responses
+- [backend/agents/](backend/agents) contains CrewAI orchestration, task definitions, and thin tool adapters
+- [backend/shared/](backend/shared) contains reusable LLM, memory, and retrieval infrastructure
 
 ## Main API endpoints
 
@@ -39,6 +42,16 @@ The project currently includes:
 - Users: `/api/users/register/`, `/api/users/me/`
 - Documents: `/api/documents/`, `/api/documents/<uuid>/`
 - Quizzes: `/api/quizzes/`, `/api/quizzes/generate/`, `/api/quizzes/<uuid>/start/`, `/api/quizzes/attempts/<uuid>/submit/`, `/api/quizzes/analytics/`
+- Chat: `/api/chat/`, `/api/chat/<conversation_id>/messages/`
+
+## CrewAI workflows
+
+`agents/crew/edtech_crew.py` exposes explicit workflows through `run_edtech_crew()`:
+
+- `chat`: shared retrieval → Pedagogical Agent → shared LLM → answer and sources
+- `quiz_generation`: shared retrieval → Generator Agent → shared LLM → generated quiz JSON and sources
+
+Retrieval remains owned by `shared/retrieval/`, LLM access remains behind `shared/llm/`, and quiz persistence remains in `quizzes/services/generator.py`.
 
 ## Quick start
 
