@@ -1,9 +1,8 @@
 import json
 import logging
 
+from agents.crew.edtech_crew import run_edtech_crew
 from documents.models import Document
-from shared.llm import get_default_llm_client
-from shared.retrieval import get_relevant_context
 
 from ..models import Option, Quiz, Question
 
@@ -19,47 +18,16 @@ def generate_quiz_for_document(
 ) -> Quiz:
     doc = Document.objects.get(id=document_id, user=user)
 
-    context_text = get_relevant_context(
-        document_id=document_id,
-        query_text=topic,
-        top_k=5,
+    result = run_edtech_crew(
+        workflow="quiz_generation",
         user=user,
+        document_id=document_id,
+        content=topic or "",
+        num_questions=num_questions,
+        difficulty=difficulty,
+        topic=topic,
     )
-
-    if not context_text:
-        raise ValueError("No processed context found for this document.")
-
-    prompt = f"""
-You are an expert AI quiz generator. Generate a structured JSON quiz based ONLY on the context below.
-
-Context:
-{context_text}
-
-Requirements:
-- Number of questions: {num_questions}
-- Difficulty level: {difficulty}
-- Output format: STRICT JSON ONLY with no markdown formatting.
-
-JSON Schema:
-{{
-  "quiz_title": "Title based on context",
-  "questions": [
-    {{
-      "question": "Question text?",
-      "explanation": "Why the correct option is right",
-      "options": [
-        {{"text": "Option A", "is_correct": true}},
-        {{"text": "Option B", "is_correct": false}},
-        {{"text": "Option C", "is_correct": false}},
-        {{"text": "Option D", "is_correct": false}}
-      ]
-    }}
-  ]
-}}
-"""
-
-    llm_client = get_default_llm_client()
-    response_text = llm_client.generate_structured(prompt)
+    response_text = result["quiz"]
     clean_json = response_text.replace("```json", "").replace("```", "").strip()
     quiz_payload = json.loads(clean_json)
 
