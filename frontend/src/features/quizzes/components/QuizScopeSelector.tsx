@@ -1,0 +1,2 @@
+import styles from './quizzes.module.css'
+export function QuizScopeSelector({ value, documents, onChange }: { value: string; documents: Array<{ id: string; title: string }>; onChange?: (value: string) => void }) { return <label className={styles.field}><span className={styles.label}>Study scope</span><select className={styles.select} value={value} onChange={(event) => onChange?.(event.target.value)}>{documents.map((document) => <option key={document.id} value={document.id}>{document.title}</option>)}</select></label> }
