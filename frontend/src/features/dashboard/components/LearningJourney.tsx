@@ -1,0 +1,5 @@
+import { Card } from '../../../shared/components/ui/Card'
+import { Progress } from '../../../shared/components/ui/progress'
+import styles from './dashboard.module.css'
+
+export function LearningJourney({ streak = 5, level = 4, xp = 720, nextLevelXp = 1000 }: { streak?: number; level?: number; xp?: number; nextLevelXp?: number }) { return <Card className={styles.journey} radius="large"><div className={styles.journeyGlow} aria-hidden="true" /><div className={styles.journeyMain}><div className={styles.journeyEyebrow}>Your learning journey</div><h2>Keep your momentum going.</h2><p>Small, consistent sessions add up to meaningful progress.</p><div className={styles.xpRow}><Progress value={xp / nextLevelXp * 100} /><span>{xp} / {nextLevelXp} XP</span></div></div><div className={styles.journeyStats}><div><span className={styles.journeyIcon}>🔥</span><strong>{streak}</strong><span>day streak</span></div><div><span className={styles.journeyIcon}>⭐</span><strong>Level {level}</strong><span>learner</span></div></div></Card> }

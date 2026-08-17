@@ -1,0 +1,356 @@
+.stack {
+  display: grid;
+  gap: 1.25rem;
+  padding-bottom: 3rem;
+}
+.welcome {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.welcome h2 {
+  margin: 0 0 0.35rem;
+  font-family: "Space Grotesk", Inter, sans-serif;
+  font-size: clamp(1.7rem, 3vw, 2.35rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+.welcome p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+.filter {
+  padding: 0.65rem 0.85rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  font-size: 0.8rem;
+}
+.journey {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  min-height: 12.5rem;
+  padding: 1.75rem;
+  overflow: hidden;
+  border: 0;
+  background: #1e1633;
+  color: #fff;
+  box-shadow: 0 16px 35px rgb(123 47 247 / 0.16);
+}
+.journeyGlow {
+  position: absolute;
+  right: 12%;
+  bottom: -50%;
+  width: 20rem;
+  height: 20rem;
+  background: radial-gradient(circle, rgb(255 61 154 / 0.45), transparent 68%);
+  pointer-events: none;
+}
+.journeyMain {
+  position: relative;
+  z-index: 1;
+  max-width: 32rem;
+}
+.journeyEyebrow {
+  margin-bottom: 0.55rem;
+  color: #ffc93c;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.journey h2 {
+  margin: 0 0 0.4rem;
+  font-family: "Space Grotesk", Inter, sans-serif;
+  font-size: 1.7rem;
+}
+.journey p {
+  margin: 0 0 1.35rem;
+  color: #d7d0e6;
+  line-height: 1.5;
+}
+.xpRow {
+  display: grid;
+  grid-template-columns: minmax(10rem, 20rem) auto;
+  align-items: center;
+  gap: 0.8rem;
+  color: #e9e4f2;
+  font-size: 0.75rem;
+}
+.journeyStats {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.journeyStats > div {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 5.2rem;
+}
+.journeyIcon {
+  font-size: 1.35rem;
+}
+.journeyStats strong {
+  font-size: 1.55rem;
+}
+.journeyStats span:last-child {
+  color: #c9bfdc;
+  font-size: 0.7rem;
+}
+.stats {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr 1fr;
+  gap: 0.75rem;
+}
+.stat {
+  padding: 0.9rem 1rem;
+  border-radius: 0.9rem;
+  box-shadow: none;
+}
+.stat:first-child {
+  background: var(--color-surface-alt);
+}
+.statLabel {
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+}
+.statValue {
+  margin: 0.45rem 0 0;
+  font-family: "Space Grotesk", Inter, sans-serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+.statTrend {
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
+}
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(19rem, 0.65fr);
+  gap: 1rem;
+}
+.panel {
+  padding: 1.25rem;
+}
+.panel h2 {
+  margin-bottom: 1rem;
+  font-family: "Space Grotesk", Inter, sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.chartWrap {
+  height: 14rem;
+}
+.chartTooltip {
+  padding: 0.55rem 0.7rem;
+  background: var(--color-text);
+  border-radius: 0.6rem;
+  color: #fff;
+  font-size: 0.7rem;
+}
+.chartTooltip p {
+  margin: 0;
+}
+.performance {
+  display: grid;
+  gap: 1rem;
+}
+.accuracy {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.ring {
+  display: grid;
+  place-items: center;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--color-primary) var(--accuracy),
+    var(--color-surface-alt) 0
+  );
+}
+.ring::after {
+  display: grid;
+  place-items: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  background: var(--color-surface);
+  content: attr(data-value);
+  font-family: "Space Grotesk", Inter, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.performanceCopy p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+.segments {
+  display: grid;
+  gap: 0.4rem;
+}
+.segmentLabel {
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+}
+.segment {
+  height: 0.45rem;
+  overflow: hidden;
+  background: var(--color-surface-alt);
+  border-radius: 99px;
+}
+.correct,
+.incorrect {
+  height: 100%;
+  border-radius: inherit;
+}
+.correct {
+  background: var(--color-success);
+}
+.incorrect {
+  background: var(--color-error);
+}
+.concepts,
+.recommendations,
+.activity {
+  display: grid;
+  gap: 0.7rem;
+}
+.concept {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.35rem 0.75rem;
+  padding: 0.75rem;
+  background: var(--color-surface-alt);
+  border-radius: 0.75rem;
+}
+.conceptName {
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+.conceptScore {
+  color: var(--color-warning);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.conceptBar {
+  grid-column: 1 / -1;
+  height: 0.35rem;
+  overflow: hidden;
+  background: var(--color-border);
+  border-radius: 99px;
+}
+.conceptBar span {
+  display: block;
+  height: 100%;
+  background: var(--color-warning);
+  border-radius: inherit;
+}
+.recommendation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+}
+.recommendationCopy {
+  display: grid;
+  gap: 0.2rem;
+}
+.recommendationIcon {
+  color: var(--color-accent-orange);
+}
+.recommendation h3 {
+  margin: 0;
+  font-size: 0.8rem;
+}
+.recommendation p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  line-height: 1.35;
+}
+.recommendation button {
+  flex: 0 0 auto;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.7rem;
+}
+.activityItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.activityItem:last-child {
+  border-bottom: 0;
+}
+.activityIcon {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  background: var(--color-surface-alt);
+  border-radius: 0.65rem;
+}
+.activityTitle {
+  margin: 0 0 0.15rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+.activityMeta {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+}
+.activityScore {
+  margin-left: auto;
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+@media (max-width: 900px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 620px) {
+  .welcome {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .journey {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .journeyStats {
+    justify-content: flex-start;
+  }
+  .xpRow {
+    grid-template-columns: 1fr;
+  }
+  .stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .panel {
+    padding: 1rem;
+  }
+}
